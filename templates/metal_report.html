@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <title>Сравнение цен на металл</title>
+  <style>
+    body { font-family: Arial, sans-serif; padding: 20px; background: #f9f9f9; color: #333; }
+    h1 { font-size: 2em; color: #2c3e50; }
+    .subtitle { font-size: 1rem; color: #555; margin-bottom: 1em; }
+    table { width: 100%; border-collapse: collapse; background: #fff; box-shadow: 0 2px 5px rgba(0,0,0,0.1); }
+    th, td { border: 1px solid #ddd; padding: 12px 8px; text-align: center; }
+    th { background: #ecf0f1; color: #2c3e50; }
+    tr:nth-child(even) { background: #fafafa; }
+    tr:hover { background: #f1f1f1; }
+    caption { caption-side: bottom; margin-top: 0.5em; font-weight: bold; }
+    a { display: inline-block; margin-top: 1.5em; color: #2c3e50; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+  </style>
+</head>
+<body>
+  <h1>Результат расчёта цены металла</h1>
+  <p class="subtitle">
+    Регион: <strong>{{ region }}</strong>,
+    Металл: <strong>{{ metal.replace('_',' ') }}</strong>,
+    Толщина: <strong>{{ thickness }} мм</strong>,
+    Марка: <strong>{{ grade }}</strong>,
+    Ширина: <strong>{{ width }} мм</strong>,
+    Объём: <strong>{{ volume|int }} т</strong>,
+    Сорт: <strong>{{ sort }}</strong>.
+  </p>
+  <p class="subtitle">
+    Отсрочка платежа: <strong>{{ credit_days }} дн.</strong> (Надбавка: <strong>{{ credit_markup_pct }}%</strong>)
+  </p>
+
+  <table>
+    <tr>
+      <th>Цена за тонну, ₽</th>
+      <th>Итого за {{ volume|int }} т, ₽</th>
+    </tr>
+    <tr>
+      <td>{{ "{:,}".format(price_per_t|round(0,'floor')|int) }}</td>
+      <td>{{ "{:,}".format(total_price|round(0,'floor')|int) }}</td>
+    </tr>
+    <caption>Сравнение расчёта для параметров металла</caption>
+  </table>
+
+  <a href="/">← Новый расчёт</a>
+</body>
+</html>

@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        /* Ограничиваем ширину всей формы, чтобы поля одинаково растягивались */
+        form { max-width: 400px; margin: auto; }
+        label { display: block; margin: 10px 0; }
+        /* Все поля и кнопка растягиваем на 100% ширины контейнера формы */
+        input, select, button { width: 100%; padding: 5px; box-sizing: border-box; }
+        button { margin-top: 15px; }
+
+        /* Убираем спиннер-стрелочки у number-поля */
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -appearance: textfield;
+        }
+    </style>
+
+  <meta charset="UTF-8">
+  <title>Калькулятор цены металла</title>
+  <style>
+    body { font-family: sans-serif; padding: 20px; }
+    form { max-width: 400px; margin: auto; }
+    label { display: block; margin: 10px 0; }
+    input, select { width: 100%; padding: 5px; }
+    button { margin-top: 15px; padding: 8px 12px; }
+  </style>
+</head>
+<body>
+  <h1>Калькулятор цены металла</h1>
+  <form action="/расчёт_металлов" method="post">
+    <label>Регион:
+      <select name="region">
+        {% for r in regions %}
+        <option value="{{ r }}">{{ r }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>Металл:
+      <select name="metal">
+        {% for m in metals %}
+        <option value="{{ m }}">{{ m.replace('_',' ') }}</option>
+        {% endfor %}
+      </select>
+    </label>
+
+    <label>Толщина (например «0.5»):
+      <input type="text" name="thickness" required placeholder="0.5">
+    </label>
+
+    <label>Марка/допуск:
+      <select name="grade">
+        <option value="нестанд допуск">нестанд допуск</option>
+        <option value="сталь 09Г2С">сталь 09Г2С</option>
+        <option value="сталь Ст3пс">сталь Ст3пс</option>
+        <option value="сталь Ст3сп">сталь Ст3сп</option>
+        <option value="оцинковка стандарт">оцинковка стандарт</option>
+        <option value="полимерное покрытие">полимерное покрытие</option>
+      </select>
+    </label>
+
+    <label>Ширина (мм, например «1000»):
+      <input type="text" name="width" required placeholder="1000">
+    </label>
+
+    <label>Объём (тонн):
+      <input type="number" name="volume" required step="any" placeholder="100">
+    </label>
+
+    <label>Сорт:
+      <select name="sort">
+        <option value="первый">первый</option>
+        <option value="второй">второй</option>
+        <option value="третий">третий</option>
+      </select>
+    </label>
+    <label>Отсрочка платежа (дней):
+        <input type="number" name="credit_days" min="0" required>
+    </label>
+
+    <button type="submit">Рассчитать</button>
+  </form>
+</body>
+</html>
