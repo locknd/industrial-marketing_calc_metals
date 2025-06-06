@@ -1,89 +1,140 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <style>
-        body { font-family: sans-serif; padding: 20px; }
-        /* Ограничиваем ширину всей формы, чтобы поля одинаково растягивались */
-        form { max-width: 400px; margin: auto; }
-        label { display: block; margin: 10px 0; }
-        /* Все поля и кнопка растягиваем на 100% ширины контейнера формы */
-        input, select, button { width: 100%; padding: 5px; box-sizing: border-box; }
-        button { margin-top: 15px; }
-
-        /* Убираем спиннер-стрелочки у number-поля */
-        input[type="number"]::-webkit-outer-spin-button,
-        input[type="number"]::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-        input[type="number"] {
-            -appearance: textfield;
-        }
-    </style>
-
   <meta charset="UTF-8">
   <title>Калькулятор цены металла</title>
   <style>
     body { font-family: sans-serif; padding: 20px; }
     form { max-width: 400px; margin: auto; }
     label { display: block; margin: 10px 0; }
-    input, select { width: 100%; padding: 5px; }
-    button { margin-top: 15px; padding: 8px 12px; }
+    input, select, button { width: 100%; padding: 5px; box-sizing: border-box; }
+    button { margin-top: 15px; }
+
+    /* Убираем спиннер-стрелочки у number-поля */
+    input[type="number"]::-webkit-outer-spin-button,
+    input[type="number"]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+    input[type="number"] {
+      -moz-appearance: textfield;
+      appearance: textfield;
+    }
+
+    small { color: #555; font-size: 0.9em; }
   </style>
 </head>
 <body>
   <h1>Калькулятор цены металла</h1>
   <form action="/расчёт_металлов" method="post">
+    <!-- Регион -->
     <label>Регион:
-      <select name="region">
+      <select name="region" required>
         {% for r in regions %}
-        <option value="{{ r }}">{{ r }}</option>
+          <option value="{{ r }}">{{ r }}</option>
         {% endfor %}
       </select>
     </label>
 
+    <!-- Металл -->
     <label>Металл:
-      <select name="metal">
+      <select name="metal" required>
         {% for m in metals %}
-        <option value="{{ m }}">{{ m.replace('_',' ') }}</option>
+          <option value="{{ m }}">{{ m.replace('_',' ') }}</option>
         {% endfor %}
       </select>
     </label>
 
-    <label>Толщина (например «0.5»):
-      <input type="text" name="thickness" required placeholder="0.5">
+    <!-- Толщина -->
+    <label>Толщина (мм):
+      <select name="thickness" required>
+        <!-- Перечисляем все значения, которые есть в utils.THICKNESS_UP -->
+        <option value="0.25">0.25</option>
+        <option value="0.35">0.35</option>
+        <option value="0.5">0.5</option>
+        <option value="0.7">0.7</option>
+        <option value="0.9">0.9</option>
+        <option value="1.0">1.0</option>
+        <option value="1.25">1.25</option>
+        <option value="1.3">1.3</option>
+        <option value="1.35">1.35</option>
+        <option value="1.4">1.4</option>
+        <option value="1.5">1.5</option>
+        <option value="1.6">1.6</option>
+        <option value="1.8">1.8</option>
+        <option value="2.0">2.0</option>
+        <option value="4.0">4.0</option>
+        <option value="12.0">12.0</option>
+      </select>
     </label>
+    <small>Диапазоны толщины определены для каждого типа металла (например, 0.35, 0.5, 1.25, 2.0 и т.д.).</small>
 
+    <!-- Марка/допуск -->
     <label>Марка/допуск:
-      <select name="grade">
-        <option value="нестанд допуск">нестанд допуск</option>
-        <option value="сталь 09Г2С">сталь 09Г2С</option>
-        <option value="сталь Ст3пс">сталь Ст3пс</option>
-        <option value="сталь Ст3сп">сталь Ст3сп</option>
-        <option value="оцинковка стандарт">оцинковка стандарт</option>
-        <option value="полимерное покрытие">полимерное покрытие</option>
+      <select name="grade" required>
+        {% for g in grades %}
+          <option value="{{ g }}">{{ g }}</option>
+        {% endfor %}
       </select>
     </label>
 
-    <label>Ширина (мм, например «1000»):
-      <input type="text" name="width" required placeholder="1000">
+    <!-- Ширина -->
+    <label>Ширина (мм):
+      <input type="number" name="width" required placeholder="860 или 1000 или 1250 или 1500">
     </label>
+    <small>
+      Надбавка за ширину (USD):<br>
+      &nbsp;&nbsp;Ширина &lt; 1000 мм → 10 $<br>
+      &nbsp;&nbsp;1000–1249 мм → 15 $<br>
+      &nbsp;&nbsp;1250–1499 мм → 20 $<br>
+      &nbsp;&nbsp;1500 мм → 25 $<br>
+      (Другое значение → 0 $)
+    </small>
 
+    <!-- Объём -->
     <label>Объём (тонн):
       <input type="number" name="volume" required step="any" placeholder="100">
     </label>
+    <small>
+      Объёмная надбавка:<br>
+      &nbsp;&nbsp;Объём &lt; 500 т → +2 %<br>
+      &nbsp;&nbsp;500–1000 т → +1 %<br>
+      &nbsp;&nbsp;Объём &gt; 1000 т → +0 %
+    </small>
 
+    <!-- Сорт -->
     <label>Сорт:
-      <select name="sort">
+      <select name="sort" required>
         <option value="первый">первый</option>
         <option value="второй">второй</option>
         <option value="третий">третий</option>
       </select>
     </label>
-    <label>Отсрочка платежа (дней):
-        <input type="number" name="credit_days" min="0" required>
-    </label>
+    <small>Коэффициент сортности: первый = 1.00, второй = 0.90, третий = 0.80</small>
 
+    <!-- Станция -->
+    <label>Станция (головной склад):
+      <select name="station" required>
+        {% for s in stations %}
+          <option value="{{ s }}">{{ s }}</option>
+        {% endfor %}
+      </select>
+    </label>
+    <small>
+      Надбавка за станцию (RUB):<br>
+      Аппаратная → 3 861 ₽, Машзавод → 4 200 ₽, Центр Волгоград → 3 500 ₽, Ростов → 3 800 ₽
+    </small>
+
+    <!-- Отсрочка платежа (кредит) -->
+    <label>Отсрочка платежа (дней):
+      <input type="number" name="credit_days" min="0" required>
+    </label>
+    <small>
+      Надбавка за коммерческий кредит:<br>
+      15 дней → +0.5 %, 30 дней → +1.0 %, 45 дней → +1.5 % и т.д. (0.5 % за каждые 15 дней)
+    </small>
+
+    <!-- Кнопка “Рассчитать” -->
     <button type="submit">Рассчитать</button>
   </form>
 </body>
